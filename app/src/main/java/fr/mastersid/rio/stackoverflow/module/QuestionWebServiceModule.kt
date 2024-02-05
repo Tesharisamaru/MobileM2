@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import fr.mastersid.rio.stackoverflow.data.QuestionMoshiAdapter
 import fr.mastersid.rio.stackoverflow.data.QuestionWebService
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -21,6 +22,7 @@ class QuestionWebServiceModule {
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
+            .add(QuestionMoshiAdapter())
             .build()
     }
 

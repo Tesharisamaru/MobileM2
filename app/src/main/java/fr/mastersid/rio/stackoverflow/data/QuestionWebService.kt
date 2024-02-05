@@ -17,5 +17,5 @@ interface QuestionWebService {
         @Query("order") order : String = "desc" ,
         @Query("sort") sort : String = "activity" ,
         @Query("site") site : String = "stackoverflow" ,
-    ): ListQuestionJson
+    ): List<Question>
 }
