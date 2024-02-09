@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.mastersid.rio.stackoverflow.data.QuestionMoshiAdapter
 import fr.mastersid.rio.stackoverflow.data.QuestionWebService
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
@@ -27,9 +28,9 @@ class QuestionWebServiceModule {
     }
 
     @Provides
-    fun provideRetrofit(): Retrofit{
+    fun provideRetrofit ( moshi : Moshi ): Retrofit {
         return Retrofit.Builder()
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl(BASE_URL)
             .build()
     }
