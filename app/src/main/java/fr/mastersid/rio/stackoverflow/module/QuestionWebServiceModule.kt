@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 private const val BASE_URL ="https://api.stackexchange.com/2.3/"
 
-    @Module
+@Module
 @InstallIn(SingletonComponent::class)
 class QuestionWebServiceModule {
 
