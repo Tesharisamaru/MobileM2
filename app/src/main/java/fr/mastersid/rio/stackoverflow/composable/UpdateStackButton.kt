@@ -15,7 +15,7 @@ fun UpdateStackButton(updateStack : () -> Unit , modifier : Modifier ) {
         onClick = updateStack ,
         modifier = modifier
     ) {
-        Text (" Update list ")
+        Text (" Update Questions ")
     }
 }
 
