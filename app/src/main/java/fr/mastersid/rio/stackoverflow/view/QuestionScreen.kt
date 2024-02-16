@@ -6,19 +6,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -37,6 +36,8 @@ import fr.mastersid.rio.stackoverflow.composable.UpdateStackButton
 @Composable
 fun QuestionScreen(questionListViewModel: QuestionListViewModel = viewModel()) {
     val questionList by questionListViewModel.questionList.observeAsState(initial = emptyList())
+    val isNetFailing by questionListViewModel.isNetFailing.observeAsState(initial = false)
+    val isHttpFailing by questionListViewModel.isHttpFailing.observeAsState(initial = false)
     val refreshing by questionListViewModel.isUpdating.observeAsState(initial = false)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -44,14 +45,22 @@ fun QuestionScreen(questionListViewModel: QuestionListViewModel = viewModel()) {
         SnackbarHostState()
     }
 
-    LaunchedEffect() {
-        snackbarHostState.showSnackbar(
-            message = context.getString(R.string.net_error)
-                    duration = SnackbarDuration . Short,
-            withDismissAction = true
-        )
+    LaunchedEffect(isNetFailing) {
+        if (isNetFailing ) {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.net_error),
+                duration = SnackbarDuration.Short,
+                withDismissAction = true,
+            )
+        }
+        if(isHttpFailing) {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.request_error),
+                duration = SnackbarDuration.Short,
+                withDismissAction = true,
+            )
+        }
     }
-
 
     Scaffold(
         content = { innerPadding ->
@@ -69,7 +78,9 @@ fun QuestionScreen(questionListViewModel: QuestionListViewModel = viewModel()) {
                     }
                 }
                 if (refreshing) { // affichage d'un indicateur de progression si refreshing == true
-                    LinearProgressIndicator(modifier = Modifier.align(Alignment.TopCenter))
+                    LinearProgressIndicator(modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth() )
                 }
             }
         },

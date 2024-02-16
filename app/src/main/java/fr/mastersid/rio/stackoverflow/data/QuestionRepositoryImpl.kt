@@ -16,31 +16,35 @@ import javax.inject.Singleton
 @Singleton
 class QuestionRepositoryImpl @Inject constructor(
     private val questionWebService: QuestionWebService,
-    private val  questionDao: QuestionDao,
-    @CoroutineScopeIO private val coroutineScopeIO : CoroutineScope
+    private val questionDao: QuestionDao,
+    @CoroutineScopeIO private val coroutineScopeIO: CoroutineScope
 ) : QuestionRepository {
-    override val questionResponse : MutableStateFlow<QuestionResponse> = MutableStateFlow(
+    override val questionResponse: MutableStateFlow<QuestionResponse> = MutableStateFlow(
         QuestionResponse.Success(emptyList())
     )
+
     init {
         coroutineScopeIO.launch {
             questionDao.getQuestionListFlow().collect { list ->
-                questionResponse.emit(QuestionResponse.Success (list))
+                questionResponse.emit(QuestionResponse.Success(list))
             }
         }
     }
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun updateQuestionInfo() {
         try {
-        questionResponse.emit(QuestionResponse.Pending)
-        val list = questionWebService
-            .getQuestionList()
-        questionDao.insertAll(list)
-        } catch (e:IOException){
-             Log.d("firstBug","${e.message}")
+            questionResponse.emit(QuestionResponse.Pending)
+            val list = questionWebService
+                .getQuestionList()
+            questionDao.insertAll(list)
+        } catch (e: IOException) {
+            Log.d("firstBug", "${e.message}")
+            questionResponse.emit(QuestionResponse.NetError)
 
-        } catch(e:HttpException){
+        } catch (e: HttpException) {
             Log.d("secondBug", "${e.message}")
+            questionResponse.emit(QuestionResponse.HttpError)
         }
     }
 
